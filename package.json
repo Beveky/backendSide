@@ -8,7 +8,7 @@
   },
   "autour": "",
   "engines": {
-    "node": "v20.10.0"
+    "node": "18.x"
   },
   "keywords": [],
   "author": "",
