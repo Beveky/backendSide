@@ -17,18 +17,8 @@ mongoose
   .then(() => console.log("DB Connection Successfully Connected"))
   .catch((err) => console.log(err));
 
-const allowedOrigins = ["http://localhost:5173", "process.env.PORT"];
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-  })
-);
+// Enable CORS for all routes
+app.use(cors());
 
 app.use(express.json());
 app.use("/api/auth", authRoute);
