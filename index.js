@@ -17,7 +17,11 @@ mongoose
   .then(() => console.log("DB Connection Successfully Connected"))
   .catch((err) => console.log(err));
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(
+  cors({
+    origin: "http://localhost:5173" || "https://backend-side-hy4a.vercel.app",
+  })
+);
 
 app.use(express.json());
 app.use("/api/auth", authRoute);
