@@ -18,7 +18,15 @@ mongoose
   .catch((err) => console.log(err));
 
 // Enable CORS for all routes
-app.use(cors());
+const corsOptions = {
+  origin: ["http://localhost:5173"], // Replace with your frontend URL
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // Allow cookies to be sent with the request
+  preflightContinue: false,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use("/api/auth", authRoute);
