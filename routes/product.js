@@ -1,60 +1,45 @@
 const cloudinary = require("cloudinary").v2;
 const Product = require("../models/Product");
+
 const {
   verifyToken,
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
 } = require("./verifyToken");
-
+const cloudinary = require("../utils/cloudinary");
 const router = require("express").Router();
-const multer = require("multer");
-const storage = multer.memoryStorage(); // Use memory storage
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-      cb(null, true);
-    } else {
-      cb(new Error("Not an image! Please upload only images."), false);
-    }
-  },
-});
 
 //CREATE
 
-router.post(
-  "/",
-  verifyTokenAndAdmin,
-  upload.single("image"),
-  async (req, res) => {
-    if (!req.file)
-      return res.status(400).json({ message: "No image file provided." });
+router.post("/", verifyTokenAndAdmin, async (req, res) => {
+  const { title, desc, img, categories, size, color, price } = req.body;
 
-    try {
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { resource_type: "auto" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.end(req.file.buffer);
+  try {
+    if (img) {
+      const uploadedResponse = await cloudinary.uploader.upload(img, {
+        upload_preset: "online-shop",
       });
 
-      const newProduct = new Product({
-        ...req.body,
-        img: result.secure_url,
-      });
+      if (uploadedResponse) {
+        const product = new Product({
+          title,
+          desc,
+          img: uploadedResponse,
+          categories,
+          size,
+          color,
+          price,
+        });
 
-      const savedProduct = await newProduct.save();
-      res.status(200).json(savedProduct);
-    } catch (err) {
-      res.status(500).json(err.message || err);
+        const savedProduct = await product.save();
+        res.status(200).send(savedProduct);
+      }
     }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
   }
-);
+});
 
 //UPDATE
 router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
