@@ -1,43 +1,22 @@
-const cloudinary = require("cloudinary").v2;
 const Product = require("../models/Product");
-
 const {
   verifyToken,
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
 } = require("./verifyToken");
-const cloudinary = require("../utils/cloudinary");
+
 const router = require("express").Router();
 
 //CREATE
 
 router.post("/", verifyTokenAndAdmin, async (req, res) => {
-  const { title, desc, img, categories, size, color, price } = req.body;
+  const newProduct = new Product(req.body);
 
   try {
-    if (img) {
-      const uploadedResponse = await cloudinary.uploader.upload(img, {
-        upload_preset: "online-shop",
-      });
-
-      if (uploadedResponse) {
-        const product = new Product({
-          title,
-          desc,
-          img: uploadedResponse,
-          categories,
-          size,
-          color,
-          price,
-        });
-
-        const savedProduct = await product.save();
-        res.status(200).send(savedProduct);
-      }
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
+    const savedProduct = await newProduct.save();
+    res.status(200).json(savedProduct);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
