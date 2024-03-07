@@ -8,13 +8,8 @@
   ],
   "routes": [
     {
-      "src": "/api/products",
-      "methods": ["GET", "POST"],
-      "headers": {
-        "Access-Control-Allow-Origin": "https://jasmin-shopy.web.app",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST , PUT , DELETE"
-      }
+      "src": "/(.*)",
+      "dest": "/"
     }
   ]
 }
